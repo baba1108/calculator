@@ -1,0 +1,93 @@
+import math
+
+class Calculatrice:
+    def __init__(self):
+        # Initialiser le dictionnaire avec les opérations de base
+        self.operations = {
+            '+': self.add,
+            '-': self.subtract,
+            '*': self.multiply,
+            '/': self.divide,
+        }
+
+    def add_operation(self, symbole, fonction):
+        """Ajoute une nouvelle opération au dictionnaire."""
+        self.operations[symbole] = fonction
+
+    def add(self, a, b):
+        return a + b
+
+    def subtract(self, a, b):
+        return a - b
+
+    def multiply(self, a, b):
+        return a * b
+
+    def divide(self, a, b):
+        if b == 0:
+            raise ValueError("Division par zéro n'est pas permise.")
+        return a / b
+
+    def calculate(self, a, symbole, b):
+        """Calcule le résultat selon l'opération."""
+        if symbole not in self.operations:
+            raise ValueError(f"L'opération '{symbole}' n'est pas valide.")
+        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+            raise TypeError("Les entrées doivent être des nombres.")
+
+        return self.operations[symbole](a, b)
+
+# Fonctions avancées
+def exponentiation(a, b):
+    return a ** b
+
+def racine_carree(a):
+    if a < 0:
+        raise ValueError("La racine carrée d'un nombre négatif n'est pas définie.")
+    return math.sqrt(a)
+
+def logarithme(a, base=10):
+    if a <= 0:
+        raise ValueError("Le logarithme d'un nombre non positif n'est pas défini.")
+    return math.log(a, base)
+
+# Ajout des opérations avancées
+calc = Calculatrice()
+calc.add_operation('^', exponentiation)
+calc.add_operation('√', racine_carree)
+calc.add_operation('log', logarithme)
+
+# Programme principal
+def main():
+    while True:
+        try:
+            print("\nOpérations disponibles : +, -, *, /, ^ (exponentiation), √ (racine carrée), log (logarithme)")
+            user_input = input("Entrez votre calcul (ou 'q' pour quitter) : ")
+            if user_input.lower() == 'q':
+                print("Merci d'avoir utilisé la calculatrice. Au revoir!")
+                break
+
+            # Traitement de l'entrée
+            parts = user_input.split()
+            if len(parts) == 3:
+                a, symbole, b = parts
+                a = float(a)
+                b = float(b)
+                result = calc.calculate(a, symbole, b)
+                print(f"Résultat : {result}")
+            elif len(parts) == 2 and parts[0] == '√':
+                a = float(parts[1])
+                result = racine_carree(a)
+                print(f"Résultat : {result}")
+            elif len(parts) == 2 and parts[0] == 'log':
+                a = float(parts[1])
+                result = logarithme(a)
+                print(f"Résultat : {result}")
+            else:
+                print("Entrée invalide. Veuillez entrer une opération correcte.")
+
+        except (ValueError, TypeError) as e:
+            print(f"Erreur : {e}")
+
+if __name__ == "__main__":
+    main()
