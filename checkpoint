@@ -1,93 +1,86 @@
 import math
 
-class Calculatrice:
+class Calculator:
     def __init__(self):
-        # Initialiser le dictionnaire avec les opérations de base
         self.operations = {
             '+': self.add,
             '-': self.subtract,
             '*': self.multiply,
             '/': self.divide,
+            '^': self.exponentiation,
+            'sqrt': self.racine_carre,
+            'log': self.logarithme
         }
 
-    def add_operation(self, symbole, fonction):
-        """Ajoute une nouvelle opération au dictionnaire."""
-        self.operations[symbole] = fonction
+    def add(self, num1, num2):
+        return num1 + num2
 
-    def add(self, a, b):
-        return a + b
+    def subtract(self, num1, num2):
+        return num1 - num2
 
-    def subtract(self, a, b):
-        return a - b
+    def multiply(self, num1, num2):
+        return num1 * num2
 
-    def multiply(self, a, b):
-        return a * b
+    def divide(self, num1, num2):
+        if num2 == 0:
+            print('error: division par zéro')
+            return None
+        return num1 / num2
 
-    def divide(self, a, b):
-        if b == 0:
-            raise ValueError("Division par zéro n'est pas permise.")
-        return a / b
+    def exponentiation(self, num1, num2):
+        return num1 ** num2
 
-    def calculate(self, a, symbole, b):
-        """Calcule le résultat selon l'opération."""
-        if symbole not in self.operations:
-            raise ValueError(f"L'opération '{symbole}' n'est pas valide.")
-        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
-            raise TypeError("Les entrées doivent être des nombres.")
+    def racine_carre(self, num1):
+        return math.sqrt(num1)
 
-        return self.operations[symbole](a, b)
+    def logarithme(self, num1, base=math.e):
+        return math.log(num1, base)
 
-# Fonctions avancées
-def exponentiation(a, b):
-    return a ** b
+    def calculate(self, num1, symbol, num2=None):
+        if symbol not in self.operations:
+            print('error: opération non valide')
+            raise ValueError('opération non valide')
+        if not isinstance(num1, (int, float)) or (num2 is not None and not isinstance(num2, (int, float))):
+            print('error: les entrées doivent être des nombres')
+            raise ValueError('les entrées doivent être des nombres')
+        return self.operations[symbol](num1, num2) if num2 is not None else self.operations[symbol](num1)
 
-def racine_carree(a):
-    if a < 0:
-        raise ValueError("La racine carrée d'un nombre négatif n'est pas définie.")
-    return math.sqrt(a)
+    def main(self):
+        while True:
+            print('Choisissez une opération:')
+            print('1. add (+)')
+            print('2. subtract (-)')
+            print('3. multiply (*)')
+            print('4. divide (/)')
+            print('5. exponentiation (^)')
+            print('6. racine carré (sqrt)')
+            print('7. logarithme (log)')
+            print('8. quitter')
+            choice = input('Entrez votre choix: ')
 
-def logarithme(a, base=10):
-    if a <= 0:
-        raise ValueError("Le logarithme d'un nombre non positif n'est pas défini.")
-    return math.log(a, base)
-
-# Ajout des opérations avancées
-calc = Calculatrice()
-calc.add_operation('^', exponentiation)
-calc.add_operation('√', racine_carree)
-calc.add_operation('log', logarithme)
-
-# Programme principal
-def main():
-    while True:
-        try:
-            print("\nOpérations disponibles : +, -, *, /, ^ (exponentiation), √ (racine carrée), log (logarithme)")
-            user_input = input("Entrez votre calcul (ou 'q' pour quitter) : ")
-            if user_input.lower() == 'q':
-                print("Merci d'avoir utilisé la calculatrice. Au revoir!")
+            if choice == '8':
                 break
 
-            # Traitement de l'entrée
-            parts = user_input.split()
-            if len(parts) == 3:
-                a, symbole, b = parts
-                a = float(a)
-                b = float(b)
-                result = calc.calculate(a, symbole, b)
-                print(f"Résultat : {result}")
-            elif len(parts) == 2 and parts[0] == '√':
-                a = float(parts[1])
-                result = racine_carree(a)
-                print(f"Résultat : {result}")
-            elif len(parts) == 2 and parts[0] == 'log':
-                a = float(parts[1])
-                result = logarithme(a)
-                print(f"Résultat : {result}")
+            if choice in ['1', '2', '3', '4', '5']:
+                num1 = float(input('Entrez un nombre : '))
+                num2 = float(input('Entrez un autre nombre : '))
+                operation = {'1': '+', '2': '-', '3': '*', '4': '/', '5': '^'}[choice]
+                result = self.calculate(num1, operation, num2)
+            elif choice == '6':
+                num1 = float(input('Entrez un nombre : '))
+                result = self.calculate(num1, 'sqrt')
+            elif choice == '7':
+                num1 = float(input('Entrez un nombre : '))
+                base = input('Entrez la base (laissez vide pour e) : ')
+                base = float(base) if base else math.e
+                result = self.calculate(num1, 'log', base)
             else:
-                print("Entrée invalide. Veuillez entrer une opération correcte.")
+                print('error: choix non valide')
+                continue
 
-        except (ValueError, TypeError) as e:
-            print(f"Erreur : {e}")
+            print(f'Le résultat est : {result}')
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    calculator = Calculator()
+    calculator.main()
